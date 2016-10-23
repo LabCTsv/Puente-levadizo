@@ -7,10 +7,11 @@ const int pinMotorR2 = 6;
 
 const int velocidadPwm = 224;
 
-typedef enum { D_ADELANTE, D_ATRAS, D_ALTO, D_PASAR
+typedef enum { D_SUBIR, D_BAJAR, D_ALTO, D_PASAR, D_PREV
              } DIRECCION;
 
 const int v = 2, a = 3, r = 4;
+const int EsperaAmarillo=2000;
 
 void setup() {
   Wire.begin();
@@ -38,40 +39,49 @@ void procesarComando(char dato) {
 
   switch (dato) {
     case 'A':
-      controlMotor(D_ADELANTE);
-      digitalWrite(r, LOW);
       digitalWrite(a, HIGH);
+      delay(EsperaAmarillo);
+      controlMotor(D_BAJAR);
+      digitalWrite(a, LOW);
+      digitalWrite(r, HIGH);
       digitalWrite(v, LOW);
       break;
     case 'B':
-      controlMotor(D_ATRAS);
-      digitalWrite(r, HIGH);
+      digitalWrite(a, HIGH);
+      delay(EsperaAmarillo);
+      controlMotor(D_SUBIR);
       digitalWrite(a, LOW);
+      digitalWrite(r, HIGH);
       digitalWrite(v, LOW);
       break;
     case 'a':
     case 'b':
       controlMotor(D_ALTO);
       digitalWrite(r, LOW);
-      digitalWrite(a, LOW);
+      digitalWrite(a, HIGH);
       digitalWrite(v, LOW);
       break;
     case 'D':
+      digitalWrite(a, HIGH);
+      delay(EsperaAmarillo);
       controlMotor(D_PASAR);
+      digitalWrite(a, LOW);
       digitalWrite(r, LOW);
       digitalWrite(v, HIGH);
       break;
-
+    case 'E':
+      controlMotor(D_PREV);
+      break;
   }
 }
 
 void controlMotor(DIRECCION dir) {
   switch (dir) {
-    case D_ADELANTE:
+    case D_SUBIR:
       digitalWrite(pinMotorL1, HIGH);
       digitalWrite(pinMotorR2, LOW);
       break;
-    case D_ATRAS:
+    case D_BAJAR:
       digitalWrite(pinMotorL1, LOW);
       digitalWrite(pinMotorR2, HIGH);
       break;
@@ -82,6 +92,11 @@ void controlMotor(DIRECCION dir) {
     case D_PASAR:
       digitalWrite(pinMotorL1, LOW);
       digitalWrite(pinMotorR2, LOW);
+      break;
+    case D_PREV:
+      digitalWrite(a, HIGH);
+      digitalWrite(v, LOW);
+      digitalWrite(r, LOW);
       break;
   }
 }
